@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>MyHTML-BrickBreaking</title>
+        <meta charset="utf-8"> 
+	    <link rel='stylesheet' id='wp-block-library-css' href='style.css' type='text/css' media='all'/>
+        <link rel='stylesheet' id='studiomeal-style-css' href='style.css' type='text/css' media='all'/>
+        <link rel="icon" href="moon.gif" sizes="16x16" type="image/gif">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:image:width" content="600">
+		<meta property="og:image:height" content="315">
+		<meta property="og:type" content="website">
+        <link href="https://fonts.googleapis.com/css?family=Anton|Ewert|Noto+Sans+KR:200|Noto+Serif+KR|Pinyon+Script&display=swap&subset=korean" rel="stylesheet">
+        <style>* { padding: 0; margin: 0; } canvas { background: #eee; display: block; margin: 0 auto; }</style>
+	</head>
+
+	<body class="post-template-default single single-post postid-533 single-format-standard">
+		<div id="fb-root"></div>
+		<div class="container">
+			<div class="today">Issue No. 20220626</div>
+			<header class="global-header">
+				<div class="main-header-logo">
+					<div class="main-header-box main-header-box-1">
+						<div class="text">Web</div>
+                        <div class="text"></div>
+						<div class="text">1801162</div>
+						<div class="text">HSCOMET</div>
+					</div>
+
+					<a class="main-header-logo-link" href="index.html">
+						<img src="mainlogo.png" alt="main logo">
+					</a>
+					<a href="https://github.com/hscomet78/project" target="_blank" class="main-header-box main-header-box-2">
+						<p>MY Git Hub</p>
+					</a>
+				</div>
+
+				<nav class="main-menu-con">
+                    <ul id="menu-main-menu" class="main-menu">
+                        <li id="menu-item-1" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1"><a href="https://www.naver.com/">NAVER</a></li>
+                        <li id="menu-item-2" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-2"><a href="https://www.google.co.kr/">Google</a></li>
+                        <li id="menu-item-3" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3"><a href="https://www.daum.net">DAUM</a></li>
+                        <li id="menu-item-4" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4"><a href="https://www.yahoo.com/">Yahoo!</a></li>
+                        <li id="menu-item-5" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-5"><a href="https://www.msn.com/">MSN</a></li>
+                    </ul>           
+                </nav>			
+            </header>
+
+    <div class="main">
+        <section class="post">
+            <header class="post-header">
+                <h1 class="post-title">Break Bricks!</h1>
+                <div class="post-date">2022-06-25 / HSCOMET78</div>
+            </header>
+            
+        <section class="note">
+            <p>벽돌깨기(BrickBreaking)-개인제작</p>
+        </section>
+
+        <p>
+            <canvas id="myCanvas" width="960" height="500"></canvas>
+
+            <script>
+                var canvas = document.getElementById("myCanvas");
+                var ctx = canvas.getContext("2d");
+                var ballRadius = 20;
+                var x = canvas.width/2;
+                var y = canvas.height-30;
+                 
+                var theta  = 45 * Math.PI / 180.0;
+               
+                var dx = 4;
+                var dy = dx * Math.tan(theta);
+                
+                var paddleHeight = 17;
+                var paddleWidth = 125;
+                var paddleX = (canvas.width-paddleWidth)/2;
+                var rightPressed = false;
+                var leftPressed = false;
+                var brickRowCount = 6;
+                var brickColumnCount = 5;
+                
+                var brickPadding = 10;
+                
+                var brickOffsetTop = 30;
+                var brickOffsetLeft = 30;
+                var score = 0;
+                var lives = 6;
+            
+                
+                var width  = canvas.width;
+                var height = canvas.width;
+                
+                var brickWidth  = (((width - (brickOffsetLeft*2)) - brickPadding * (brickRowCount-1)) / brickRowCount); 
+                var brickHeight = 30 ;
+                
+                var bricks = [];
+                for(var c=0; c<brickColumnCount; c++) {
+                    bricks[c] = [];
+                    for(var r=0; r<brickRowCount; r++) {
+                        bricks[c][r] = { x: 0, y: 0, status: 1 };
+                    }
+                }
+            
+                document.addEventListener("keydown", keyDownHandler, false);
+                document.addEventListener("keyup", keyUpHandler, false);
+                document.addEventListener("mousemove", mouseMoveHandler, false);
+                    
+                function keyDownHandler(e) {
+                    if(e.code  == "ArrowRight") {
+                        rightPressed = true;
+                    }
+                    else if(e.code == 'ArrowLeft') {
+                        leftPressed = true;
+                    }
+                }
+                function keyUpHandler(e) {
+                    if(e.code == 'ArrowRight') 
+                        rightPressed = false;
+                    else if(e.code == 'ArrowLeft')
+                        leftPressed = false;
+                }
+                function mouseMoveHandler(e) {
+                    var relativeX = e.clientX - canvas.offsetLeft;
+                    if(relativeX > 0 && relativeX < canvas.width) { 
+                        paddleX = relativeX - paddleWidth/2;
+                        }
+                }
+                function collisionDetection() {
+                    for(var c=0; c<brickColumnCount; c++) {
+                        for(var r=0; r<brickRowCount; r++) {
+                            var b = bricks[c][r];
+                            if(b.status == 1) {
+                                var xpb = x + ballRadius;
+                                var xmb = x - ballRadius;
+                                ypb = y + ballRadius;
+                                ymb = y - ballRadius;
+                                
+                                 
+                                if( xpb > b.x && xmb < b.x+brickWidth && ypb > b.y && ymb < b.y+brickHeight) {
+                                   
+                                    dy = -dy;
+                                    b.status = 0;
+                                    score++;
+                                    if(score == brickRowCount*brickColumnCount) {
+                                        alert("축하합니다!");
+                                        document.location.reload();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            
+                function drawBall() {
+                    ctx.beginPath();
+                    ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+                    ctx.fillStyle = "#ff0000";
+                    ctx.fill();
+                    ctx.closePath();
+                }
+                function drawPaddle() {
+                    ctx.beginPath();
+                    ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+                    ctx.fillStyle = "#000000";
+                    ctx.fill();
+                    ctx.closePath();
+                }
+                function drawBricks() {
+                    for(var c=0; c<brickColumnCount; c++) {
+                        for(var r=0; r<brickRowCount; r++) {
+                            if(bricks[c][r].status == 1) {
+                                var brickX = (r*(brickWidth+brickPadding))+brickOffsetLeft;
+                                var brickY = (c*(brickHeight+brickPadding))+brickOffsetTop;
+                                bricks[c][r].x = brickX;
+                                bricks[c][r].y = brickY;
+                                ctx.beginPath();
+                                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                                ctx.fillStyle = "#008000";
+                                ctx.fill();
+                                ctx.closePath();
+                            }
+                        }
+                    }
+                }
+                function drawScore() {
+                    ctx.font = "16px Arial";
+                    ctx.fillStyle = "#0095DD";
+                    ctx.fillText("Score: "+score, 8, 20);
+                }
+                function drawLives() {
+                    ctx.font = "16px Arial";
+                    ctx.fillStyle = "#0095DD";
+                    ctx.fillText("Lives: "+lives, canvas.width-65, 20);
+                }
+            
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    drawBricks();
+                    drawBall();
+                    drawPaddle();
+                    drawScore();
+                    drawLives();
+                    collisionDetection();
+            
+                    if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+                        dx = -dx;
+                    }
+                    
+                    if(y + dy < ballRadius) {
+                        dy = -dy;
+                    } else if(y  + dy > canvas.height-ballRadius) {
+                        if( x + ballRadius > paddleX  && x - ballRadius < paddleX + paddleWidth ) {
+                            dy = -dy;
+                        }
+                        else {
+                            lives--;
+                            if(!lives) {
+                                alert("게임 오버");
+                                document.location.reload();
+                            }
+                            else {
+                                x = canvas.width/2;
+                                y = canvas.height-30;
+                                dx = 4;
+                                dy = -dx * Math.tan(theta);
+                                paddleX = (canvas.width-paddleWidth)/2;
+                            }
+                        }
+                    }
+            
+                    if(rightPressed && paddleX < canvas.width-paddleWidth) {
+                        paddleX += 7;
+                    }
+                    else if(leftPressed && paddleX > 0) {
+                        paddleX -= 7;
+                    }
+            
+                    x += dx;
+                    y += dy;
+                    
+                    requestAnimationFrame(draw);
+                }
+            
+                draw();
+            </script>
+        </p>
+
+
+    </div>
+
+
+    <div class="sidebar sidebar-a">
+                <ul class="Link">
+                    <li>
+                        <a href="index.html" class="link-social link-facebook" >MainPage(Index)</a>
+                    </li>
+                    <li>
+                        <a href="Profile.html" class="link-social link-facebook" >Profile</a>
+                    </li>
+                    <li>
+                        <a href="Web.html" class="link-social link-facebook" >WEB</a>
+                    </li>
+                    <li>
+                        <a href="Html.html" class="link-social link-facebook" >HTML</a>
+                    </li>
+                    <li>
+                        <a href="Css.html" class="link-social link-facebook" >CSS</a>
+                    </li>
+                    <li>
+                        <a href="JavaScript.html" class="link-social link-facebook" >JavaScript</a>
+                    </li>
+                    <li>
+                        <a href="http://info.cern.ch" class="link-social link-facebook" >First Web</a>
+                    </li>
+                    <li>
+                        <a href="https://www.kunsan.ac.kr/index.kunsan?contentsSid=4714&sso=ok" class="link-social link-facebook" >군산대학교→</a>
+                    </li>
+                    <li>
+                        <a href="https://eclass.kunsan.ac.kr/Main.do?cmd=viewHome&userDTO.localeKey=ko" class="link-social link-facebook" >군산대학교 eClass→</a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/c/%EC%83%9D%ED%99%9C%EC%BD%94%EB%94%A91" class="link-social link-facebook" target="_blank">생활코딩 Youtube→</a>
+                    </li>
+                    <li>
+                        <a href="https://opentutorials.org/course/1" class="link-social link-facebook" target="_blank">생활코딩→</a>
+                    </li>
+                </ul>
+    </div>
+        <div class="main-sidebar sidebar sidebar-b banners">
+            <div class="poster-con">
+                <a href="Brick.html" class="poster">
+                    <img class="lumi-image" src="poster.jpg" alt="벽돌깨기">
+                </a>
+                <p class="image-caption">
+                    벽돌깨기 게임하러 가기
+                </p>
+            </div>
+        </div>
+            <!-- footer -->
+            <footer class="global-footer">
+                <p class="copyright">&copy; 2022 Site Page by 1801162 HSCOMET78</p>
+            </footer>
+    </div>
+    
+</body>
+</html>
