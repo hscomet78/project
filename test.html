@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>MyHTML-HTML</title>
+		<title>MyHTML</title>
         <meta charset="utf-8"> 
 	    <link rel='stylesheet' id='wp-block-library-css' href='style.css' type='text/css' media='all'/>
         <link rel='stylesheet' id='studiomeal-style-css' href='style.css' type='text/css' media='all'/>
         <link rel="icon" href="moon.gif" sizes="16x16" type="image/gif">
+        <link rel='stylesheet' href='calender.css' media='all'/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta property="og:image:width" content="600">
 		<meta property="og:image:height" content="315">
@@ -48,28 +49,45 @@
     <div class="main">
         <section class="post">
             <header class="post-header">
-                <h1 class="post-title">HTML</h1>
+                <h1 class="post-title">Calendar-JS</h1>
                 <div class="post-date">2022-06-25 / HSCOMET78</div>
             </header>
             
         <section class="note">
-            <p>이 페이지는 HTML에 대한 설명이 있습니다. </p>
+            <p>이 페이지는 인터넷을 참조하여 달력 기능을 구현한 페이지입니다.</p>
         </section>
 
-        <p><a href="https://www.w3.org/TR/html5/" target="_blank" title="html5speicification">
-            Hypertext Markup Language(HTML)</a>is the standard markup language for <strong> crating <u>web</u> pages</strong> and web applications.
-            Web browsers receive HTML documents from a web server or from local storage and render them into multimedia web pages. 
-            HTML describes the structure of a web page semantically and originally included cues for the appearance of the document.
-            <img src = "coding.jpg" width ="100%">
-        </p>
-        <p style="margin-top:45px;">HTML elements are the building blocks of HTML pages. With HTML constructs, images and other objects, such as interactive forms, may be embedded into the rendered page.
-             It provides a means to create structured documents by denoting structural semantics for text such as headings, paragraphs, lists, links, quotes and other items. 
-             HTML elements are delineated by tags, written using angle brackets.
-        </p>
-
-
+        <div class="container">
+            <div class="calendar-assets">
+                <h1 id="currentDate"></h1>
+                <div class="field">
+                    <label for="date">Date</label>
+                    <form class="form-input" id="date-search" onsubmit="return setDate(this)">
+                        <input type="date" class="text-field" name="date" id="date" required>
+                        <button type="submit" class="btn btn-small" title="search"><i class="fas fa-search"></i>찾기</button>
+                    </form>
+                </div>
+                <div class="day-assets">
+                    <button class="btn" onclick="prevDay()" title="prevDay"><i class="fas fa-chevron-left"></i> < </button>
+                    <button class="btn" onclick="resetDate()" title="resetDate"><i class="fas fa-calendar-day"></i>오 늘</button>
+                    <button class="btn" onclick="nextDay()" title="nextDay"><i class="fas fa-chevron-right"></i> > </button>
+                </div>
+            </div>
+            <div class="calendar" id="table">
+                <div class="header">
+                    <div class="month" id="month-header">
+    
+                    </div>
+                    <div class="buttons">
+                        <button class="icon" onclick="prevMonth()" title="Last month"><i class="fas fa-chevron-left"></i> < </button>
+                        <button class="icon" onclick="nextMonth()" title="Next month"><i class="fas fa-chevron-right"></i> > </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <script src="calender.js" crossorigin="anonymous"></script>
     </div>
-
 
     <div class="sidebar sidebar-a">
                 <ul class="Link">
@@ -124,7 +142,7 @@
             <!-- footer -->
             <footer class="global-footer">
                 <p class="copyright">&copy; 2022 Site Page by 1801162 HSCOMET78</p>
-                        </footer>
+            </footer>
     </div>
     
 </body>
